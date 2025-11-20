@@ -4,6 +4,7 @@ import displayio
 import adafruit_ssd1306
 from adafruit_display_text import label
 import terminalio
+import neopixel
 
 from kmk.kmk_keyboard import KMKKeyboard
 from kmk.scanners.keypad import KeysScanner
@@ -21,20 +22,40 @@ display.show(splash)
 text_area = label.Label(terminalio.FONT, text="Ready", color=0xFFFFFF, x=0, y=10)
 splash.append(text_area)
 
+num_pixels = 8
+pixels = neopixel.NeoPixel(board.GP0, num_pixels)
+pixels.fill((0, 0, 0))
+pixels.show()
+
+colors = [
+    (255, 0, 0),     # Red
+    (0, 255, 0),     # Green
+    (0, 0, 255),     # Blue
+    (255, 255, 255), # White
+    (255, 255, 0),   # Yellow
+    (0, 255, 255),   # Cyan
+    (255, 0, 255),   # Magenta
+]
+
+color_names = ["Red", "Green", "Blue", "White", "Yellow", "Cyan", "Magenta"]
+current_color_index = 0
+
 texts = []
 command_macros = []
 
 def add_key(gpio, command, display_text):
-    taps = [KC.LCTRL(KC.LALT(KC.T)), Delay(500)] # control alt t
-    for char in command:
-        if char == ' ':
-            taps.append(Tap(KC.SPACE))
-        elif char == '-':
-            taps.append(Tap(KC.MINUS))
-        else:
-            key = getattr(KC, char.upper())
-            taps.append(Tap(key))
-    taps.append(Tap(KC.ENTER))
+    taps = []
+    if command:
+        taps = [KC.LCTRL(KC.LALT(KC.T)), Delay(500)] # control alt t
+        for char in command:
+            if char == ' ':
+                taps.append(Tap(KC.SPACE))
+            elif char == '-':
+                taps.append(Tap(KC.MINUS))
+            else:
+                key = getattr(KC, char.upper())
+                taps.append(Tap(key))
+        taps.append(Tap(KC.ENTER))
     macro = KC.MACRO(*taps)
     command_macros.append(macro)
     texts.append(display_text)
@@ -52,9 +73,9 @@ add_key(board.GP3, "steam", "Opening Steam")
 add_key(board.GP4, "discord", "Opening Discord")
 
 add_key(board.GP28, "nvim", "Opening Neovim")
-add_key(board.GP29, "", "idk")
-add_key(board.GP2, "top", "top")
-add_key(board.GP1, "sleep", "Sleep")
+add_key(board.GP29, "gedit", "Opening Notepad")
+add_key(board.GP2, "sleep", "Sleeping")
+add_key(board.GP1, "", "Cycle LED")
 
 class MyKeyboard(KMKKeyboard):
     def on_press(self, key, keyboard, *args, **kwargs):
@@ -62,6 +83,12 @@ class MyKeyboard(KMKKeyboard):
         if key in command_macros:
             idx = command_macros.index(key)
             text_area.text = texts[idx]
+            if key == command_macros[7]:  # cycle LED color
+                global current_color_index
+                current_color_index = (current_color_index + 1) % len(colors)
+                pixels.fill(colors[current_color_index])
+                pixels.show()
+                text_area.text = color_names[current_color_index]
 
 keyboard = MyKeyboard()
 
