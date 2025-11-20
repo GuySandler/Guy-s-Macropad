@@ -13,6 +13,6 @@ The smallest macropad I could make with a screen and 8 neopixels,
 
 # Pictures
 
-| _Schematic_                                | _PCB_                                | _CAD_                                 | _PCBWay Pricing_                                 |
-| ------------------------------------------ | ------------------------------------ | ------------------------------------- | ------------------------------------- |
-| <img src=images/schematic.png width="400"> | <img src=images/pcb.png width="300"> | <img src=images/case.png width="500"> | <img src=images/pcbwayproof.png width="500"> |
+| _Schematic_                                | _PCB_                                | _CAD_                                 | _JLC Pricing_                                | _JLC Cart_      |
+| ------------------------------------------ | ------------------------------------ | ------------------------------------- | -------------------------------------        | --------------- |
+| <img src=images/schematic.png width="400"> | <img src=images/pcb.png width="300"> | <img src=images/case.png width="500"> | <img src=images/pcbcheckout.png width="500"> |<img src=images/pcbcart.png width="500"> |
